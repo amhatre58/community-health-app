@@ -1,0 +1,361 @@
+/* src/App.css */
+
+/* Global Reset & Base Theme */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #f4f7f6;
+  padding: 20px;
+  color: #2d3748;
+}
+
+/* App Layout */
+.app-container {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 85vh;
+}
+
+/* Header Banner */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+}
+
+.header h2 {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.header p {
+  font-size: 13px;
+  opacity: 0.95;
+  margin-top: 2px;
+}
+
+.header-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.lang-picker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.lang-picker select {
+  background: transparent;
+  border: none;
+  color: white;
+  outline: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.lang-picker select option {
+  color: #1a202c;
+}
+
+.profile-btn {
+  background: white;
+  color: #059669;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.1s ease;
+}
+
+.profile-btn:hover {
+  transform: translateY(-1px);
+}
+
+.logout-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+}
+
+/* Original Green Bordered Card Design */
+.card {
+  background: white;
+  padding: 18px 20px;
+  border-radius: 14px;
+  border-left: 5px solid #10b981;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.07);
+}
+
+.card h3 {
+  font-size: 16px;
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* Daily Calorie & Water Displays */
+.calorie-display {
+  margin: 12px 0 8px 0;
+}
+
+.calorie-num {
+  font-size: 26px;
+  font-weight: 800;
+  color: #10b981;
+}
+
+.calorie-denom {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.macro-bar {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 600;
+  color: #4b5563;
+  border-top: 1px solid #f0fdf4;
+  padding-top: 10px;
+  margin-top: 10px;
+}
+
+.water-control {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.water-count {
+  font-weight: 700;
+  font-size: 15px;
+  color: #0284c7;
+}
+
+.btn-group {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-group button {
+  border: none;
+  background: #e0f2fe;
+  color: #0284c7;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.btn-group button:hover {
+  background: #bae6fd;
+}
+
+/* Forms & Input Styling */
+.log-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.log-form select,
+.log-form input,
+.auth-form input {
+  padding: 11px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  outline: none;
+  background: #f9fafb;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.log-form select:focus,
+.log-form input:focus,
+.auth-form input:focus {
+  border-color: #10b981;
+  background: #ffffff;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  gap: 4px;
+}
+
+.form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.submit-btn {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+  transition: background 0.2s;
+}
+
+.submit-btn:hover {
+  background: #059669;
+}
+
+/* Auth Page Card */
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  border-left: 5px solid #10b981;
+  padding: 28px;
+}
+
+.auth-card h2 {
+  color: #10b981;
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.auth-card p {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.toggle-auth-btn {
+  background: none;
+  border: none;
+  color: #059669;
+  margin-top: 16px;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.error-msg {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+/* Meal Journal List */
+.meal-list {
+  list-style: none;
+  margin-top: 10px;
+}
+
+.meal-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 14px;
+}
+
+.meal-stats {
+  color: #10b981;
+  font-weight: 700;
+}
+
+/* Community Bulletin Special Accent */
+.community-card {
+  background: #f0fdf4;
+  border-left: 5px solid #10b981;
+}
+
+.announcement {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #166534;
+  line-height: 1.5;
+}
+
+.empty-text {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-top: 8px;
+}

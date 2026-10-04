@@ -1,0 +1,4 @@
+node_modules/
+.env
+nutrition-app-frontend/node_modules/
+nutrition--app-backend/node_modules/
