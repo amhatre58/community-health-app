@@ -1,15 +1,19 @@
 // server.js
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const path = require('path');
 
 const app = express();
-app.use(cors());
+
+// Enable CORS for Ngrok and local development
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 
-const JWT_SECRET = 'community_health_secret_key_2026';
+const JWT_SECRET = process.env.JWT_SECRET || 'community_health_secret_key_2026';
 const db = new sqlite3.Database('./nutrition.db');
 
 db.serialize(() => {
@@ -63,7 +67,7 @@ db.serialize(() => {
     date_posted TEXT DEFAULT (DATE('now', 'localtime'))
   )`);
 
-  // Seed expanded default food items with Hindi & Marathi names
+  // Seed default food items
   db.get(`SELECT count(*) as count FROM food_items`, [], (err, row) => {
     if (row && row.count === 0) {
       const foods = [
@@ -90,7 +94,7 @@ db.serialize(() => {
     }
   });
 
-  // Seed default community announcement
+  // Seed default announcement
   db.get(`SELECT count(*) as count FROM community_announcements`, [], (err, row) => {
     if (row && row.count === 0) {
       db.run(`INSERT INTO community_announcements (title, description) 
@@ -99,7 +103,7 @@ db.serialize(() => {
   });
 });
 
-// Middleware to verify JWT Token
+// JWT Verification Middleware
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -114,17 +118,21 @@ const authenticateToken = (req, res, next) => {
 
 // --- API ROUTES ---
 
-// Register User
 app.post('/api/auth/register', async (req, res) => {
   const { name, email, password, age, height, weight, target_calories } = req.body;
-  if (!name || !email || !password) return res.status(400).json({ error: 'Name, email, and password required.' });
+  if (!name || !email || !password || !age || !height || !weight) {
+    return res.status(400).json({ error: 'All input fields are required.' });
+  }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  const bmi = (weight / ((height / 100) ** 2)).toFixed(1);
+  const parsedAge = parseInt(age);
+  const parsedHeight = parseFloat(height);
+  const parsedWeight = parseFloat(weight);
+  const bmi = (parsedWeight / ((parsedHeight / 100) ** 2)).toFixed(1);
 
   db.run(
     `INSERT INTO users (name, email, password, age, height, weight, bmi, target_calories) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [name, email, hashedPassword, age || 21, height || 165, weight || 60, bmi || 22.0, target_calories || 2000],
+    [name, email, hashedPassword, parsedAge, parsedHeight, parsedWeight, bmi, target_calories || 2000],
     function (err) {
       if (err) return res.status(400).json({ error: 'Email already exists.' });
       const token = jwt.sign({ id: this.lastID, email }, JWT_SECRET);
@@ -133,10 +141,8 @@ app.post('/api/auth/register', async (req, res) => {
   );
 });
 
-// Login User
 app.post('/api/auth/login', (req, res) => {
   const { email, password } = req.body;
-
   db.get(`SELECT * FROM users WHERE email = ?`, [email], async (err, user) => {
     if (err || !user) return res.status(400).json({ error: 'User not found.' });
 
@@ -148,7 +154,6 @@ app.post('/api/auth/login', (req, res) => {
   });
 });
 
-// Get User Profile
 app.get('/api/user', authenticateToken, (req, res) => {
   db.get(`SELECT id, name, email, age, height, weight, bmi, target_calories, water_intake FROM users WHERE id = ?`, [req.user.id], (err, row) => {
     if (err || !row) return res.status(404).json({ error: 'User not found' });
@@ -156,14 +161,17 @@ app.get('/api/user', authenticateToken, (req, res) => {
   });
 });
 
-// Update Profile
 app.put('/api/user', authenticateToken, (req, res) => {
   const { name, age, height, weight, target_calories } = req.body;
-  const bmi = (weight / ((height / 100) ** 2)).toFixed(1);
+  const parsedAge = parseInt(age);
+  const parsedHeight = parseFloat(height);
+  const parsedWeight = parseFloat(weight);
+  const parsedTarget = parseInt(target_calories) || 2000;
+  const bmi = (parsedWeight / ((parsedHeight / 100) ** 2)).toFixed(1);
 
   db.run(
     `UPDATE users SET name = ?, age = ?, height = ?, weight = ?, bmi = ?, target_calories = ? WHERE id = ?`,
-    [name, age, height, weight, bmi, target_calories, req.user.id],
+    [name, parsedAge, parsedHeight, parsedWeight, bmi, parsedTarget, req.user.id],
     function (err) {
       if (err) return res.status(500).json({ error: err.message });
       res.json({ message: 'Profile updated successfully', bmi });
@@ -171,7 +179,30 @@ app.put('/api/user', authenticateToken, (req, res) => {
   );
 });
 
-// Update Water Intake
+app.get('/api/user/streak', authenticateToken, (req, res) => {
+  db.all(
+    `SELECT DISTINCT logged_date FROM meal_logs WHERE user_id = ? ORDER BY logged_date DESC`,
+    [req.user.id],
+    (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
+      let streak = 0;
+      let checkDate = new Date();
+
+      for (let i = 0; i < rows.length; i++) {
+        const logDate = rows[i].logged_date;
+        const expectedDate = checkDate.toISOString().split('T')[0];
+        if (logDate === expectedDate) {
+          streak++;
+          checkDate.setDate(checkDate.getDate() - 1);
+        } else {
+          break;
+        }
+      }
+      res.json({ streak });
+    }
+  );
+});
+
 app.post('/api/user/water', authenticateToken, (req, res) => {
   const { change } = req.body;
   db.run(`UPDATE users SET water_intake = MAX(0, water_intake + ?) WHERE id = ?`, [change, req.user.id], function (err) {
@@ -182,7 +213,6 @@ app.post('/api/user/water', authenticateToken, (req, res) => {
   });
 });
 
-// Get Food Presets
 app.get('/api/foods', (req, res) => {
   db.all(`SELECT * FROM food_items`, [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -190,29 +220,29 @@ app.get('/api/foods', (req, res) => {
   });
 });
 
-// Log Meal (Supports standard presets & custom items)
 app.post('/api/meals/log', authenticateToken, (req, res) => {
-  const { meal_type, food_id, custom_name, custom_calories, portion_count } = req.body;
+  const { meal_type, food_id, custom_name, custom_calories, portion_count, carbs, protein, fats } = req.body;
   const today = new Date().toISOString().split('T')[0];
 
-  // Handling Custom User Food Entry
   if (food_id === 'custom') {
     if (!custom_name || !custom_calories) {
-      return res.status(400).json({ error: 'Custom food name and calories are required.' });
+      return res.status(400).json({ error: 'Food name and estimated calories are required.' });
     }
     const total_calories = parseInt(custom_calories) * portion_count;
+    const total_carbs = (carbs || 0) * portion_count;
+    const total_protein = (protein || 0) * portion_count;
+    const total_fats = (fats || 0) * portion_count;
 
     db.run(
       `INSERT INTO meal_logs (user_id, meal_type, food_name, portion_count, total_calories, total_carbs, total_protein, total_fats, logged_date) 
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [req.user.id, meal_type, custom_name, portion_count, total_calories, 0, 0, 0, today],
+      [req.user.id, meal_type, custom_name, portion_count, total_calories, total_carbs, total_protein, total_fats, today],
       function (err) {
         if (err) return res.status(500).json({ error: err.message });
         return res.status(200).json({ message: 'Custom meal logged successfully!' });
       }
     );
   } else {
-    // Handling Preset Database Food Entry
     db.get(`SELECT * FROM food_items WHERE id = ?`, [food_id], (err, food) => {
       if (err || !food) return res.status(400).json({ error: 'Food item not found' });
 
@@ -234,11 +264,10 @@ app.post('/api/meals/log', authenticateToken, (req, res) => {
   }
 });
 
-// Get Meal Summary
 app.get('/api/meals/summary', authenticateToken, (req, res) => {
   const selectedDate = req.query.date || new Date().toISOString().split('T')[0];
 
-  db.all(`SELECT * FROM meal_logs WHERE user_id = ? AND logged_date = ?`, [req.user.id, selectedDate], (err, rows) => {
+  db.all(`SELECT * FROM meal_logs WHERE user_id = ? AND logged_date = ? ORDER BY id DESC`, [req.user.id, selectedDate], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
 
     const totals = rows.reduce(
@@ -256,7 +285,6 @@ app.get('/api/meals/summary', authenticateToken, (req, res) => {
   });
 });
 
-// Weekly Analytics
 app.get('/api/meals/weekly-analytics', authenticateToken, (req, res) => {
   db.all(
     `SELECT logged_date as date, SUM(total_calories) as calories 
@@ -272,7 +300,6 @@ app.get('/api/meals/weekly-analytics', authenticateToken, (req, res) => {
   );
 });
 
-// Get Announcements
 app.get('/api/announcements', (req, res) => {
   db.all(`SELECT * FROM community_announcements ORDER BY id DESC`, [], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -280,17 +307,28 @@ app.get('/api/announcements', (req, res) => {
   });
 });
 
-const path = require('path');
+app.post('/api/announcements', authenticateToken, (req, res) => {
+  const { title, description } = req.body;
+  if (!title || !description) {
+    return res.status(400).json({ error: 'Title and description required.' });
+  }
 
-// Serve static files from the React build folder
+  db.run(
+    `INSERT INTO community_announcements (title, description) VALUES (?, ?)`,
+    [title, description],
+    function (err) {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ message: 'Announcement created successfully!', id: this.lastID });
+    }
+  );
+});
+
 app.use(express.static(path.join(__dirname, 'build')));
-
-// Handle React routing, return all requests to React app
-app.get('*', (req, res) => {
+app.get(/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Backend running on http://localhost:${PORT}`);
+  console.log(`Backend server running on port ${PORT}`);
 });

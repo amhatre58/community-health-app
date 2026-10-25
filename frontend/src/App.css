@@ -1,0 +1,404 @@
+/* src/App.css */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: #f4f7f6;
+  color: #1f2937;
+  padding-bottom: 75px; /* Leaves room for fixed mobile bottom navigation bar */
+}
+
+/* Container */
+.app-container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 12px;
+}
+
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+  padding: 16px;
+}
+
+/* Top App Bar Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+  color: white;
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+  margin-bottom: 12px;
+}
+
+.header h2 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.header p {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lang-picker select {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  outline: none;
+}
+
+.lang-picker select option {
+  color: #1f2937;
+}
+
+.logout-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Card Styling */
+.card {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 12px;
+}
+
+.card h3 {
+  font-size: 15px;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+/* Bottom Tab Navigation Bar */
+.tab-navigation {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  background: #ffffff;
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 4px;
+  border-top: 1px solid #e5e7eb;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  color: #6b7280;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  flex: 1;
+}
+
+.tab-btn.active {
+  color: #10b981;
+}
+
+/* Calorie Display */
+.calorie-display {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.calorie-num {
+  font-size: 28px;
+  font-weight: 800;
+  color: #10b981;
+}
+
+.calorie-denom {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.macro-bar {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  background: #f0fdf4;
+  padding: 10px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #047857;
+}
+
+/* Water Counter */
+.water-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f0f9ff;
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.water-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.water-count {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0284c7;
+}
+
+.btn-group {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-group button {
+  border: none;
+  background: #0284c7;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Inputs & Forms */
+.log-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.log-form select,
+.log-form input,
+.auth-form input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  background: #fafafa;
+}
+
+.log-form select:focus,
+.log-form input:focus,
+.auth-form input:focus {
+  border-color: #10b981;
+  background: #fff;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.estimation-box {
+  background: #fdfaef;
+  border: 1px solid #fef08a;
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.estimation-box p {
+  font-size: 11px;
+  color: #854d0e;
+  font-weight: 600;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.submit-btn {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+  margin-top: 4px;
+}
+
+.submit-btn:hover {
+  background: #059669;
+}
+
+/* Meals List */
+.meal-list {
+  list-style: none;
+}
+
+.meal-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 13px;
+}
+
+.meal-tag {
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  margin-right: 6px;
+}
+
+.meal-stats {
+  color: #10b981;
+  font-weight: 700;
+}
+
+/* Community Posts */
+.announcement-card {
+  background: #f0fdf4;
+  border-left: 4px solid #10b981;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.announcement-card strong {
+  font-size: 13px;
+  color: #047857;
+}
+
+.announcement-card p {
+  font-size: 12px;
+  color: #374151;
+  margin-top: 2px;
+}
+
+/* Authentication Screen */
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+}
+
+.auth-card h2 {
+  color: #10b981;
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+
+.auth-card p {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.toggle-auth-btn {
+  background: none;
+  border: none;
+  color: #059669;
+  margin-top: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.error-msg {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.empty-text {
+  font-size: 12px;
+  color: #9ca3af;
+  text-align: center;
+  padding: 12px 0;
+}
+
+.streak-badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
