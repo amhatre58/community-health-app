@@ -8,10 +8,9 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recha
 import './App.css';
 
 // Automatically handles Ngrok URL or local port 5000
-const API_BASE_URL = window.location.origin.includes('localhost')
-  ? 'http://localhost:5000'
-  : '';
-
+const API_BASE_URL = window.location.hostname.includes('onrender.com')
+  ? ''
+  : 'http://localhost:5000';
 const translations = {
   en: {
     title: 'HealthyCommunity 🥗',
